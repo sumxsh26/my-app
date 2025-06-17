@@ -1,0 +1,90 @@
+/* HairSalonCalendar.css */
+
+.hair-salon-container {
+    padding: 2rem;
+    font-family: sans-serif;
+  }
+  
+  .time-slot-container {
+    margin-top: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .time-slot {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .time-slot.confirmed {
+    background-color: #d9fdd3;
+  }
+  
+  .time-slot.pending {
+    background-color: #fff3cd;
+  }
+  
+  .time-slot.available {
+    background-color: white;
+  }
+  
+  .book-slot-btn {
+    margin-left: 1rem;
+    cursor: pointer;
+  }
+  
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 300px;
+    position: relative;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+  
+  .modal-content input,
+  .modal-content select {
+    width: 100%;
+    margin-top: 0.25rem;
+    margin-bottom: 0.75rem;
+    padding: 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .confirm-button {
+    margin-top: 1rem;
+    width: 100%;
+    padding: 0.5rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
