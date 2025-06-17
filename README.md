@@ -1,6 +1,7 @@
 # Hair Salon Booking Website 
 This website allows users to book for service, about...
 
+[website link:](https://sumxsh26.github.io/my-app/) 
 ## Project Rationale
 
 Why I created this project -> internship challenge 
