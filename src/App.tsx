@@ -2,6 +2,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import HairSalonCalendar from './HairSalonCalendar';
+import CalendarApp from './HairSalonCalendar';
 import './App.css';
 
 function App() {
@@ -15,7 +16,7 @@ function App() {
     </header>
 
     <div style={{ padding: '2rem' }}>
-      <HairSalonCalendar />
+     <CalendarApp />
     </div>
   </div>
   );

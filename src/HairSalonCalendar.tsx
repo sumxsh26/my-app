@@ -1,93 +1,4 @@
 /*
-import React from 'react';
-import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
-import { format, parse, startOfWeek, getDay } from 'date-fns';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-
-import { HairSalonScheduleTemplate } from './types'; 
-
-const locales = {
-  'en-US': require('date-fns/locale/en-US'),
-};
-
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
-});
-
-// Sample data (you can fetch or load this dynamically)
-const salonTemplate: HairSalonScheduleTemplate = {
-  templateName: 'Hair Salon Schedule',
-  workingHours: {
-    start: '10:00',
-    end: '20:00',
-  },
-  slotDurationMinutes: 15,
-  services: [
-    { name: 'Haircut', durationMinutes: 30 },
-    { name: 'Hair Coloring', durationMinutes: 60 },
-  ],
-  bookings: [
-    {
-      id: '1',
-      date: '2025-06-18',
-      startTime: '11:00',
-      endTime: '12:00',
-      status: 'confirmed',
-      customerName: 'Aiman',
-      service: 'Hair Coloring',
-      stylist: 'Jessie',
-    },
-    {
-      id: '2',
-      date: '2025-06-18',
-      startTime: '13:00',
-      endTime: '13:30',
-      status: 'pending',
-      customerName: 'Maya',
-      service: 'Haircut',
-      stylist: 'Ken',
-    },
-  ],
-};
-
-// Convert bookings to calendar events
-const events = salonTemplate.bookings.map((booking) => {
-  const start = new Date(`${booking.date}T${booking.startTime}`);
-  const end = new Date(`${booking.date}T${booking.endTime}`);
-  return {
-    title: `${booking.customerName} - ${booking.service} (${booking.status})`,
-    start,
-    end,
-    resource: booking,
-  };
-});
-
-const HairSalonCalendar: React.FC = () => {
-  return (
-    <div style={{ height: '600px', margin: '2rem' }}>
-      <h2>{salonTemplate.templateName}</h2>
-      <Calendar
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        defaultView="day"
-        views={['day', 'week', 'month']}
-        style={{ height: '100%' }}
-        defaultDate={new Date('2025-06-18')}
-      />
-    </div>
-  );
-};
-
-export default HairSalonCalendar;
-*/
-
-
 import React, { useState } from 'react';
 import './HairSalonCalendar.css';
 import { HairSalonScheduleTemplate } from './types';
@@ -98,10 +9,10 @@ const salonTemplate: HairSalonScheduleTemplate = {
     start: '10:00',
     end: '20:00',
   },
-  slotDurationMinutes: 15,
+  slotDurationMinutes: 30,
   services: [
     { name: 'Haircut', durationMinutes: 30 },
-    { name: 'Hair Coloring', durationMinutes: 60 },
+    { name: 'Hair Coloring', durationMinutes: 90 },
   ],
   bookings: [
     {
@@ -153,6 +64,7 @@ const HairSalonCalendar: React.FC = () => {
   const [customerName, setCustomerName] = useState('');
   const [selectedService, setSelectedService] = useState('');
   const [stylist, setStylist] = useState('');
+  //const [status, setStatus] = useState('pending');
 
   const timeSlots = generateTimeSlots(
     salonTemplate.workingHours.start,
@@ -160,8 +72,12 @@ const HairSalonCalendar: React.FC = () => {
     salonTemplate.slotDurationMinutes
   );
 
-  const bookingsForDay = salonTemplate.bookings.filter((b) => b.date === selectedDate);
+  //const [bookings, setBookings] = useState(salonTemplate.bookings);
+  const [bookings, setBookings] = useState<HairSalonScheduleTemplate['bookings']>(salonTemplate.bookings);
 
+
+  const bookingsForDay = bookings.filter((b) => b.date === selectedDate);
+  
   const getBookingAtTime = (time: string) => bookingsForDay.find((b) => b.startTime === time);
 
   const openModal = (slot: string) => {
@@ -177,14 +93,38 @@ const HairSalonCalendar: React.FC = () => {
     setStylist('');
   };
 
+  // endTime
+  const calculateEndTime = (start: string, serviceName: string): string => {
+    const service = salonTemplate.services.find((s) => s.name === serviceName);
+    if (!service) return start;
+  
+    const [h, m] = start.split(':').map(Number);
+    const startDate = new Date();
+    startDate.setHours(h, m);
+    startDate.setMinutes(startDate.getMinutes() + service.durationMinutes);
+    return startDate.toTimeString().slice(0, 5); // "HH:mm"
+  };
+  
+  // handle booking
   const handleBooking = () => {
-    console.log('Booking made:', {
+    if (!selectedSlot || !customerName || !selectedService || !stylist) {
+      alert('Please fill in all fields.');
+      return;
+    }
+  
+    // new booking
+    const newBooking: HairSalonScheduleTemplate['bookings'][number] = {
+      id: `${bookings.length + 1}`, // simple unique id
       date: selectedDate,
-      time: selectedSlot,
+      startTime: selectedSlot,
+      endTime: calculateEndTime(selectedSlot, selectedService),
+      status: 'pending',
       customerName,
-      selectedService,
+      service: selectedService,
       stylist,
-    });
+    };
+  
+    setBookings((prev) => [...prev, newBooking]);
     closeModal();
   };
 
@@ -276,3 +216,48 @@ const HairSalonCalendar: React.FC = () => {
 };
 
 export default HairSalonCalendar;
+*/
+
+import { useEffect, useState } from 'react'
+import { useCalendarApp, ScheduleXCalendar } from '@schedule-x/react'
+import {
+  createViewDay,
+  createViewMonthAgenda,
+  createViewMonthGrid,
+  createViewWeek,
+} from '@schedule-x/calendar'
+import { createEventsServicePlugin } from '@schedule-x/events-service'
+ 
+import '@schedule-x/theme-default/dist/index.css'
+
+ 
+function CalendarApp() {
+  const eventsService = useState(() => createEventsServicePlugin())[0]
+ 
+  const calendar = useCalendarApp({
+    views: [createViewDay(), createViewWeek(), createViewMonthGrid(), createViewMonthAgenda()],
+    events: [
+      {
+        id: '1',
+        title: 'Event 1',
+        start: '2025-06-20 00:00',
+        end: '2023-06-20 02:00',
+      },
+    ],
+    selectedDate: '2025-06-19',
+    plugins: [eventsService]
+  })
+ 
+  useEffect(() => {
+    // get all events
+    eventsService.getAll()
+  }, [])
+ 
+  return (
+    <div>
+      <ScheduleXCalendar calendarApp={calendar} />
+    </div>
+  )
+}
+ 
+export default CalendarApp
