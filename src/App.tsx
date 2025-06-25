@@ -1,8 +1,7 @@
 
 import React from 'react';
 import logo from './logo.svg';
-import HairSalonCalendar from './HairSalonCalendar';
-import CalendarApp from './HairSalonCalendar';
+import CalendarApp from './Calendar';
 import './App.css';
 
 function App() {

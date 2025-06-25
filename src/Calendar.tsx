@@ -230,7 +230,6 @@ import { createEventsServicePlugin } from '@schedule-x/events-service'
  
 import '@schedule-x/theme-default/dist/index.css'
 
- 
 function CalendarApp() {
   const eventsService = useState(() => createEventsServicePlugin())[0]
  
